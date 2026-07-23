@@ -27,3 +27,6 @@ jobs:
 
       - name: Deterministic smoke test
         run: make smoke
+
+      - name: Validate production Compose
+        run: make compose-check

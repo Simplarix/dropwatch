@@ -62,9 +62,9 @@ docker-build:
 	docker build --build-arg VERSION=$(VERSION) --build-arg REVISION=$(REVISION) --build-arg CREATED=$(CREATED) -t dropwatch:local .
 
 compose-check:
-	DROPWATCH_IMAGE=dropwatch:local docker compose -f compose.production.yml config --quiet
+	sh scripts/verify-compose.sh
 
-security: security-source security-image
+security: compose-check security-source security-image
 
 security-source:
 	$(GO) run golang.org/x/vuln/cmd/govulncheck@v1.6.0 ./...

@@ -31,6 +31,7 @@ Review the change for correctness, security, persistence, and operational compat
 - Internal timestamps remain UTC.
 - Docker stays non-root and retains CA certificates, timezone data, `/data`, and the binary healthcheck.
 - Production Compose keeps a read-only root filesystem, drops all capabilities, uses `no-new-privileges`, and references an immutable image digest.
+- Production Compose explicitly passes every documented Dokploy runtime and notification variable into the container.
 - CI never deploys.
 - Releases remain limited to exact stable `vMAJOR.MINOR.PATCH` tags on commits reachable from `main`; private deployment is a separate operator action.
 
@@ -40,4 +41,5 @@ Review the change for correctness, security, persistence, and operational compat
 - No deterministic test depends on live RDAP or public DNS.
 - `make verify` passes.
 - `make smoke` and Docker validation run when relevant.
+- `make compose-check` passes for deployment configuration changes.
 - `make security` passes before release.

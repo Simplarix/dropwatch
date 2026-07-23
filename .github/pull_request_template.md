@@ -14,6 +14,7 @@ Describe the user-visible or operational change.
 - [ ] Focused tests were added or updated.
 - [ ] `make verify` passes.
 - [ ] `make smoke` passes when relevant.
+- [ ] `make compose-check` passes for Compose, environment, or deployment changes.
 - [ ] `make security` passes for dependencies, networking, containers, workflows, or release-sensitive changes.
 - [ ] Docker/workflow validation was performed when relevant.
 

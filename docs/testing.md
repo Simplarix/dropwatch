@@ -26,7 +26,26 @@ Run:
 make security
 ```
 
-This runs `govulncheck`, gosec, a production image build, an all-severity Trivy image scan, and a high/critical Trivy configuration scan. It downloads current vulnerability databases and therefore requires internet access. GitHub runs the same classes of checks on pull requests, on `main`, and weekly.
+This first runs the production Compose validation and then runs `govulncheck`, gosec, a production image build, an all-severity Trivy image scan, and a high/critical Trivy configuration scan. It downloads current vulnerability databases and therefore requires internet access. GitHub runs the same classes of checks on pull requests, on `main`, and weekly.
+
+## Production Compose validation
+
+Run:
+
+```bash
+make compose-check
+```
+
+The check renders [compose.production.yml](../compose.production.yml) with
+synthetic, non-secret runtime values and verifies that:
+
+- the immutable `ghcr.io/simplarix/dropwatch@sha256:...` image is retained;
+- ordinary runtime overrides such as timezone and concurrency reach the service;
+- Discord and SMTP values are explicitly passed into the container;
+- Docker Compose accepts the hardened production definition.
+
+CI and the release security gate run this check so a syntactically valid Compose
+change cannot silently discard deployment variables.
 
 ## Deterministic smoke test
 
@@ -91,8 +110,8 @@ Use `-count=1` when investigating cache-sensitive failures and `-race` for concu
 | Discord or SMTP | local protocol server or `httptest`; inspect secret-safe errors |
 | CLI output | `internal/cli` tests and deterministic smoke test |
 | TUI behavior | model/update tests when logic changes; manual terminal check for layout |
-| Docker/runtime | `make docker-build`, container version command, and image healthcheck |
-| Workflow YAML | YAML/Compose validation and careful review of tag/deploy gates |
+| Docker/runtime | `make docker-build`, `make compose-check`, container version command, and image healthcheck |
+| Workflow YAML | `make compose-check` plus careful review of tag/deploy gates |
 
 ## Test design rules
 

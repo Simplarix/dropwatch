@@ -19,6 +19,7 @@ make verify       # format check, vet, race tests, build
 make smoke        # deterministic CLI/watcher/health smoke test
 make smoke-live   # optional real IANA/RDAP/DNS test
 make docker-build # local production-image build
+make compose-check # production Compose syntax and variable propagation
 make security     # source, dependency, config, and image security scans
 ```
 
@@ -73,6 +74,7 @@ Business logic must depend on repository/provider/notifier interfaces, not SQL o
 - CLI: command-output tests and `make smoke`.
 - TUI: update-model tests where practical and a manual layout check.
 - Docker/workflows: image build, version command, user/health metadata, YAML/Compose validation, and `make security`.
+- Compose/environment changes: `make compose-check` with synthetic non-secret values.
 
 ## Code Review Rules
 
