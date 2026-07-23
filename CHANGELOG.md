@@ -4,6 +4,8 @@ All notable changes to this project are documented here. The format follows Keep
 
 ## [Unreleased]
 
+## [0.1.0] - 2026-07-23
+
 ### Added
 
 - Initial CLI, Bubble Tea dashboard, and production watcher
@@ -22,3 +24,8 @@ All notable changes to this project are documented here. The format follows Keep
 - Concurrent watcher and healthcheck startup no longer races while enabling SQLite WAL mode
 - Discord transport errors no longer risk persisting or logging webhook credentials
 - Invalid timing, jitter, body-size, scheduler, and plaintext SMTP settings now fail closed
+- Production Compose now passes documented runtime and notification settings from the deployment environment
+- GHCR and Dokploy examples now consistently use the `Simplarix/dropwatch` repository and package
+
+[Unreleased]: https://github.com/Simplarix/dropwatch/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/Simplarix/dropwatch/releases/tag/v0.1.0
