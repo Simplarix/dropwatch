@@ -1,0 +1,35 @@
+name: Feature request
+description: Propose a focused product or operational improvement
+title: "[Feature]: "
+labels:
+  - enhancement
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: Describe the user or operator problem, not only the desired implementation.
+    validations:
+      required: true
+  - type: textarea
+    id: outcome
+    attributes:
+      label: Desired outcome
+    validations:
+      required: true
+  - type: textarea
+    id: scope
+    attributes:
+      label: Scope and alternatives
+      description: Include important out-of-scope behavior and alternatives considered.
+  - type: textarea
+    id: safety
+    attributes:
+      label: Safety and compatibility
+      description: Consider availability decisions, persistent data, CLI compatibility, secrets, notifications, and deployment.
+  - type: textarea
+    id: validation
+    attributes:
+      label: Acceptance criteria
+      description: List observable behavior and tests that would make the feature complete.
+

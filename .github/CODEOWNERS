@@ -1,0 +1,5 @@
+/.github/ @nbauditz
+/Dockerfile @nbauditz
+/compose.production.yml @nbauditz
+/go.mod @nbauditz
+/go.sum @nbauditz

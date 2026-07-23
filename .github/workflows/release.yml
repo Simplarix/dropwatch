@@ -1,0 +1,113 @@
+name: Stable release
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+permissions:
+  contents: write
+  packages: write
+
+concurrency:
+  group: dropwatch-production-release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Check out complete repository
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          fetch-depth: 0
+
+      - name: Validate stable SemVer tag
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ ! "${GITHUB_REF_NAME}" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Only stable tags in the exact form vMAJOR.MINOR.PATCH may deploy."
+            exit 1
+          fi
+          git fetch --no-tags origin main
+          if ! git merge-base --is-ancestor "${GITHUB_SHA}" origin/main; then
+            echo "The release commit must be reachable from origin/main."
+            exit 1
+          fi
+
+      - name: Set up Go
+        uses: actions/setup-go@924ae3a1cded613372ab5595356fb5720e22ba16 # v6
+        with:
+          go-version-file: go.mod
+          cache-dependency-path: go.sum
+
+      - name: Test
+        run: make verify
+
+      - name: Security gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          created="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          VERSION="${GITHUB_REF_NAME}" REVISION="${GITHUB_SHA}" CREATED="${created}" make security
+
+      - name: Build Linux release binaries
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p dist
+          version="${GITHUB_REF_NAME}"
+          created="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          ldflags="-s -w -X github.com/Simplarix/dropwatch/internal/version.Version=${version} -X github.com/Simplarix/dropwatch/internal/version.Commit=${GITHUB_SHA} -X github.com/Simplarix/dropwatch/internal/version.BuildTime=${created}"
+          for arch in amd64 arm64; do
+            CGO_ENABLED=0 GOOS=linux GOARCH="${arch}" go build -trimpath -ldflags="${ldflags}" -o "dist/dropwatch-linux-${arch}" ./cmd/dropwatch
+          done
+          cd dist
+          sha256sum dropwatch-linux-* > checksums.txt
+
+      - name: Log in to GHCR
+        env:
+          GHCR_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "::add-mask::${GHCR_TOKEN}"
+          printf '%s' "${GHCR_TOKEN}" | docker login ghcr.io -u "${GITHUB_ACTOR}" --password-stdin
+
+      - name: Build and push multi-architecture image
+        shell: bash
+        run: |
+          set -euo pipefail
+          image="ghcr.io/${GITHUB_REPOSITORY,,}"
+          created="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          docker buildx create --use --name dropwatch-release
+          docker buildx build \
+            --platform linux/amd64,linux/arm64 \
+            --build-arg "VERSION=${GITHUB_REF_NAME}" \
+            --build-arg "REVISION=${GITHUB_SHA}" \
+            --build-arg "CREATED=${created}" \
+            --build-arg "SOURCE=${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}" \
+            --tag "${image}:${GITHUB_REF_NAME}" \
+            --provenance=mode=max \
+            --sbom=true \
+            --metadata-file dist/image-metadata.json \
+            --push .
+          digest="$(jq -er '."containerimage.digest" | select(test("^sha256:[0-9a-f]{64}$"))' dist/image-metadata.json)"
+          printf '%s@%s\n' "${image}" "${digest}" > dist/image-digest.txt
+
+      - name: Create immutable GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh release create "${GITHUB_REF_NAME}" \
+            dist/dropwatch-linux-amd64 \
+            dist/dropwatch-linux-arm64 \
+            dist/checksums.txt \
+            dist/image-digest.txt \
+            --verify-tag \
+            --generate-notes \
+            --title "DropWatch ${GITHUB_REF_NAME}"

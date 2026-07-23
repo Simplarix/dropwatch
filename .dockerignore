@@ -1,0 +1,16 @@
+.git
+.github
+.idea
+.vscode
+data
+dist
+*.db
+*.db-shm
+*.db-wal
+.env*
+*.md
+docs
+scripts
+compose*.yml
+config.example.yaml
+Makefile

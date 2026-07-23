@@ -1,0 +1,14 @@
+/dropwatch
+/dist/
+/data/
+/*.db
+/*.db-shm
+/*.db-wal
+.env
+.DS_Store
+.idea/
+.vscode/
+coverage.out
+.codex-log/
+.claude/settings.local.json
+CLAUDE.local.md

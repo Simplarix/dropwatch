@@ -1,0 +1,53 @@
+services:
+  dropwatch:
+    image: ${DROPWATCH_IMAGE:?Set DROPWATCH_IMAGE to an immutable ghcr.io/nbauditz/dropwatch@sha256 digest}
+    pull_policy: always
+    restart: unless-stopped
+    init: true
+    user: "10001:10001"
+    read_only: true
+    privileged: false
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    pids_limit: 128
+    mem_limit: 256m
+    cpus: 1.0
+    stop_grace_period: 45s
+    environment:
+      DROPWATCH_DATABASE_PATH: /data/dropwatch.db
+      DROPWATCH_LOG_LEVEL: info
+      DROPWATCH_LOG_FORMAT: json
+      DROPWATCH_TIMEZONE: UTC
+      DROPWATCH_MAX_CONCURRENCY: "4"
+      DROPWATCH_HTTP_TIMEOUT: 15s
+      # Configure secrets in Dokploy or an untracked .env file:
+      # DROPWATCH_DISCORD_WEBHOOK_URL: ${DROPWATCH_DISCORD_WEBHOOK_URL}
+      # DROPWATCH_SMTP_HOST: ${DROPWATCH_SMTP_HOST}
+      # DROPWATCH_SMTP_PORT: ${DROPWATCH_SMTP_PORT:-587}
+      # DROPWATCH_SMTP_USERNAME: ${DROPWATCH_SMTP_USERNAME}
+      # DROPWATCH_SMTP_PASSWORD: ${DROPWATCH_SMTP_PASSWORD}
+      # DROPWATCH_SMTP_FROM: ${DROPWATCH_SMTP_FROM}
+      # DROPWATCH_SMTP_TO: ${DROPWATCH_SMTP_TO}
+      # DROPWATCH_SMTP_REQUIRE_TLS: "true"
+    volumes:
+      - type: volume
+        source: dropwatch-data
+        target: /data
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,nodev,size=16m,mode=1777
+    networks:
+      - dropwatch-egress
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+        max-file: "3"
+
+volumes:
+  dropwatch-data:
+
+networks:
+  dropwatch-egress:
+    driver: bridge

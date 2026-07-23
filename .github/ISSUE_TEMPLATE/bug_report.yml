@@ -1,0 +1,59 @@
+name: Bug report
+description: Report reproducible incorrect behavior
+title: "[Bug]: "
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Remove domains, credentials, webhook URLs, SMTP details, and database contents before submitting.
+  - type: input
+    id: version
+    attributes:
+      label: DropWatch version
+      description: Paste the output of `dropwatch version`.
+    validations:
+      required: true
+  - type: dropdown
+    id: mode
+    attributes:
+      label: Operating mode
+      options:
+        - CLI
+        - Dashboard
+        - Watcher
+        - Docker or Dokploy
+        - GitHub Actions release
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Minimal reproduction
+      description: Include sanitized commands, configuration, and deterministic steps.
+    validations:
+      required: true
+  - type: textarea
+    id: safety
+    attributes:
+      label: Availability or safety impact
+      description: State whether the issue could incorrectly report a domain as available, expose a secret, duplicate notifications, or affect watcher ownership.
+  - type: textarea
+    id: logs
+    attributes:
+      label: Sanitized logs
+      render: text
+

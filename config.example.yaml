@@ -1,0 +1,50 @@
+# Copy to your platform's DropWatch config directory or pass --config.
+# Environment variables and CLI flags override these values.
+database_path: ./data/dropwatch.db
+log_level: info
+log_format: text
+timezone: Europe/Berlin
+max_concurrency: 4
+http_timeout: 15s
+user_agent: "DropWatch/dev (+https://github.com/Simplarix/dropwatch)"
+
+rdap:
+  bootstrap_url: https://data.iana.org/rdap/dns.json
+  cache_path: ./data/rdap-bootstrap.json
+  cache_ttl: 24h
+  max_body_bytes: 2097152
+
+availability:
+  required_confirmations: 3
+  minimum_separation: 1m
+  confirmation_window: 24h
+
+intervals:
+  registered: 6h
+  hold: 30m
+  redemption_period: 15m
+  pending_delete: 2m
+  possibly_available: 1m
+  available: 1m
+  max_backoff: 6h
+  jitter_percent: 10
+
+notifications:
+  max_attempts: 3
+  retry_delay: 2s
+  discord:
+    webhook_url: ""
+  smtp:
+    host: ""
+    port: 587
+    username: ""
+    password: ""
+    from: ""
+    to: []
+    require_tls: true
+
+scheduler:
+  poll_interval: 10s
+  heartbeat_interval: 30s
+  stale_after: 2m
+  shutdown_timeout: 30s
