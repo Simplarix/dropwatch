@@ -175,11 +175,12 @@ docker run --rm \
 Or use Compose:
 
 ```bash
-export DROPWATCH_IMAGE='ghcr.io/nbauditz/dropwatch@sha256:REPLACE_WITH_RELEASE_DIGEST'
+cp .env.example .env
+# Replace DROPWATCH_IMAGE in .env with the exact line from image-digest.txt.
 docker compose -f compose.production.yml up -d
 ```
 
-Use the exact digest from the release's `image-digest.txt`; floating tags such as `latest` are intentionally unsupported for production. [compose.production.yml](compose.production.yml) uses a read-only root filesystem, drops every Linux capability, enables `no-new-privileges`, limits resources and logs, and exposes no port. Its image healthcheck calls `dropwatch health --quiet`.
+Use the exact `ghcr.io/simplarix/dropwatch@sha256:...` digest from the release's `image-digest.txt`; floating tags such as `latest` are intentionally unsupported for production. The Compose file explicitly passes only the documented DropWatch settings from `.env` or the deployment platform into the container. [compose.production.yml](compose.production.yml) uses a read-only root filesystem, drops every Linux capability, enables `no-new-privileges`, limits resources and logs, and exposes no port. Its image healthcheck calls `dropwatch health --quiet`.
 
 The `/data` volume contains SQLite data and the RDAP bootstrap cache. Back it up using a SQLite-aware snapshot or while the container is stopped; do not copy individual WAL files independently.
 
@@ -195,4 +196,4 @@ The `/data` volume contains SQLite data and the RDAP bootstrap cache. Back it up
 
 Run `make security` for reachable Go vulnerability checks, static security analysis, repository configuration scanning, and a full image CVE scan. GitHub repeats these checks for pull requests, `main`, and weekly schedules; Dependabot monitors Go modules, Actions, and Docker references.
 
-A normal push to `main` runs CI only. Only a newly pushed stable tag in the exact form `vX.Y.Z`, whose commit belongs to `main`, creates the GitHub Release and multi-architecture image with provenance and an SBOM. Deployment remains deliberately private and manual; the GitHub-hosted runner never contacts Dokploy. See [docs/dokploy.md](docs/dokploy.md).
+A normal push to `main` runs CI only. Only a newly pushed stable tag in the exact form `vX.Y.Z`, whose commit belongs to `main`, creates the GitHub Release and multi-architecture image with provenance and an SBOM. Deployment remains deliberately private and manual; the GitHub-hosted runner never contacts Dokploy. The exact GitHub, GHCR, Dokploy, backup, and verification procedure is in [docs/dokploy.md](docs/dokploy.md).
