@@ -4,6 +4,11 @@ All notable changes to this project are documented here. The format follows Keep
 
 ## [Unreleased]
 
+### Security
+
+- Update the build toolchain to Go 1.26.6 for standard-library fixes affecting URL parsing, TLS post-handshake messages, ASN.1 decoding, and IDNA/Punycode hostname validation
+- Update `modernc.org/sqlite` to 1.56.0 for upstream journal rollback integrity and `modernc.org/libc` deadlock fixes
+
 ## [0.1.0] - 2026-07-23
 
 ### Added
