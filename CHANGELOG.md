@@ -4,6 +4,12 @@ All notable changes to this project are documented here. The format follows Keep
 
 ## [Unreleased]
 
+## [0.1.1] - 2026-08-14
+
+### Changed
+
+- Update the pinned GitHub Actions used for repository checkout and Go setup
+
 ### Security
 
 - Update the build toolchain to Go 1.26.6 for standard-library fixes affecting URL parsing, TLS post-handshake messages, ASN.1 decoding, and IDNA/Punycode hostname validation
@@ -32,5 +38,6 @@ All notable changes to this project are documented here. The format follows Keep
 - Production Compose now passes documented runtime and notification settings from the deployment environment
 - GHCR and Dokploy examples now consistently use the `Simplarix/dropwatch` repository and package
 
-[Unreleased]: https://github.com/Simplarix/dropwatch/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/Simplarix/dropwatch/compare/v0.1.1...HEAD
+[0.1.1]: https://github.com/Simplarix/dropwatch/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/Simplarix/dropwatch/releases/tag/v0.1.0
