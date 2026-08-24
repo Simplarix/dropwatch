@@ -4,6 +4,13 @@ All notable changes to this project are documented here. The format follows Keep
 
 ## [Unreleased]
 
+## [0.1.2] - 2026-08-25
+
+### Changed
+
+- Update `github.com/miekg/dns` to 1.1.73, `golang.org/x/net` to 0.58.0, and `modernc.org/sqlite` to 1.57.0
+- Build production container images with Go 1.27.0
+
 ## [0.1.1] - 2026-08-14
 
 ### Changed
@@ -38,6 +45,7 @@ All notable changes to this project are documented here. The format follows Keep
 - Production Compose now passes documented runtime and notification settings from the deployment environment
 - GHCR and Dokploy examples now consistently use the `Simplarix/dropwatch` repository and package
 
-[Unreleased]: https://github.com/Simplarix/dropwatch/compare/v0.1.1...HEAD
+[Unreleased]: https://github.com/Simplarix/dropwatch/compare/v0.1.2...HEAD
+[0.1.2]: https://github.com/Simplarix/dropwatch/compare/v0.1.1...v0.1.2
 [0.1.1]: https://github.com/Simplarix/dropwatch/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/Simplarix/dropwatch/releases/tag/v0.1.0
