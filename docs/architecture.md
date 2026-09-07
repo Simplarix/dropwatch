@@ -85,7 +85,7 @@ Repository contracts live in `internal/storage/repository.go`. Business logic de
 
 ## Watcher and health
 
-The watcher stores an owner token and heartbeat in `scheduler_state`. Acquisition is atomic and permits takeover only after the configured stale period. An in-memory set prevents the same process from checking one domain twice concurrently.
+The watcher stores an owner token and heartbeat in `scheduler_state`. Acquisition is atomic and permits takeover only after the configured stale period. An in-memory set prevents the same process from checking one domain twice concurrently. Cancellation during a heartbeat follows the normal bounded worker shutdown before releasing the lease. Lease release uses a fresh, bounded context created at cleanup time, independent of watcher uptime.
 
 The health command verifies:
 

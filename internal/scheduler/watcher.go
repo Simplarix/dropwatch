@@ -2,6 +2,7 @@ package scheduler
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log/slog"
 	"os"
@@ -47,8 +48,8 @@ func (w *Watcher) Run(ctx context.Context) error {
 	if !acquired {
 		return fmt.Errorf("another watcher owns this database")
 	}
-	releaseCtx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer func() {
+		releaseCtx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 		defer cancel()
 		if err := w.store.ReleaseWatcher(releaseCtx, w.owner); err != nil {
 			w.logger.Error("release watcher lock", "error", err)
@@ -68,6 +69,9 @@ func (w *Watcher) Run(ctx context.Context) error {
 			return w.waitForWorkers()
 		case <-heartbeat.C:
 			if err := w.store.Heartbeat(ctx, w.owner, time.Now().UTC()); err != nil {
+				if ctx.Err() != nil && errors.Is(err, ctx.Err()) {
+					return w.waitForWorkers()
+				}
 				return fmt.Errorf("watcher heartbeat: %w", err)
 			}
 		case <-poll.C:
