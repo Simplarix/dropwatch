@@ -4,12 +4,19 @@ All notable changes to this project are documented here. The format follows Keep
 
 ## [Unreleased]
 
-## [0.1.3] - 2026-09-07
+## [0.1.4] - 2026-09-07
+
+Version 0.1.3 was tagged but not published because release validation detected a watcher shutdown race.
 
 ### Changed
 
 - Update `modernc.org/sqlite` to 1.58.0 (SQLite 3.53.4), `modernc.org/libc` to 1.75.6, and `modernc.org/memory` to 1.12.1
 - Build production container images with Go 1.27.1
+
+### Fixed
+
+- Treat heartbeat cancellation during shutdown as graceful termination and wait for running checks before releasing the watcher lease
+- Start the bounded lease-release context during cleanup so long-running watchers can release their lease on shutdown
 
 ## [0.1.2] - 2026-08-25
 
@@ -52,8 +59,8 @@ All notable changes to this project are documented here. The format follows Keep
 - Production Compose now passes documented runtime and notification settings from the deployment environment
 - GHCR and Dokploy examples now consistently use the `Simplarix/dropwatch` repository and package
 
-[Unreleased]: https://github.com/Simplarix/dropwatch/compare/v0.1.3...HEAD
-[0.1.3]: https://github.com/Simplarix/dropwatch/compare/v0.1.2...v0.1.3
+[Unreleased]: https://github.com/Simplarix/dropwatch/compare/v0.1.4...HEAD
+[0.1.4]: https://github.com/Simplarix/dropwatch/compare/v0.1.2...v0.1.4
 [0.1.2]: https://github.com/Simplarix/dropwatch/compare/v0.1.1...v0.1.2
 [0.1.1]: https://github.com/Simplarix/dropwatch/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/Simplarix/dropwatch/releases/tag/v0.1.0
