@@ -4,6 +4,14 @@ All notable changes to this project are documented here. The format follows Keep
 
 ## [Unreleased]
 
+## [0.1.5] - 2026-10-01
+
+### Changed
+
+- Update `golang.org/x/net` to 0.59.0, `golang.org/x/sys` to 0.48.0, and `golang.org/x/text` to 0.42.0
+- Update `modernc.org/sqlite` to 1.59.0 and `modernc.org/libc` to 1.75.7
+- Refresh the pinned Go 1.27.1 Alpine build image digest
+
 ## [0.1.4] - 2026-09-07
 
 Version 0.1.3 was tagged but not published because release validation detected a watcher shutdown race.
@@ -59,7 +67,8 @@ Version 0.1.3 was tagged but not published because release validation detected a
 - Production Compose now passes documented runtime and notification settings from the deployment environment
 - GHCR and Dokploy examples now consistently use the `Simplarix/dropwatch` repository and package
 
-[Unreleased]: https://github.com/Simplarix/dropwatch/compare/v0.1.4...HEAD
+[Unreleased]: https://github.com/Simplarix/dropwatch/compare/v0.1.5...HEAD
+[0.1.5]: https://github.com/Simplarix/dropwatch/compare/v0.1.4...v0.1.5
 [0.1.4]: https://github.com/Simplarix/dropwatch/compare/v0.1.2...v0.1.4
 [0.1.2]: https://github.com/Simplarix/dropwatch/compare/v0.1.1...v0.1.2
 [0.1.1]: https://github.com/Simplarix/dropwatch/compare/v0.1.0...v0.1.1
