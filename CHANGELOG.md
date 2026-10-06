@@ -4,7 +4,9 @@ All notable changes to this project are documented here. The format follows Keep
 
 ## [Unreleased]
 
-## [0.1.6] - 2026-10-06
+## [0.1.7] - 2026-10-06
+
+Version 0.1.6 was tagged but not published because the release runner ran out of disk space while downloading the vulnerability database.
 
 ### Changed
 
@@ -13,6 +15,7 @@ All notable changes to this project are documented here. The format follows Keep
 ### Fixed
 
 - Pick up SQLite driver fixes for WAL shared-memory read faults and statement parameter binding performance
+- Free space occupied by unused SDKs on the GitHub-hosted release runner before security scans and image builds
 
 ## [0.1.5] - 2026-10-01
 
@@ -77,8 +80,8 @@ Version 0.1.3 was tagged but not published because release validation detected a
 - Production Compose now passes documented runtime and notification settings from the deployment environment
 - GHCR and Dokploy examples now consistently use the `Simplarix/dropwatch` repository and package
 
-[Unreleased]: https://github.com/Simplarix/dropwatch/compare/v0.1.6...HEAD
-[0.1.6]: https://github.com/Simplarix/dropwatch/compare/v0.1.5...v0.1.6
+[Unreleased]: https://github.com/Simplarix/dropwatch/compare/v0.1.7...HEAD
+[0.1.7]: https://github.com/Simplarix/dropwatch/compare/v0.1.5...v0.1.7
 [0.1.5]: https://github.com/Simplarix/dropwatch/compare/v0.1.4...v0.1.5
 [0.1.4]: https://github.com/Simplarix/dropwatch/compare/v0.1.2...v0.1.4
 [0.1.2]: https://github.com/Simplarix/dropwatch/compare/v0.1.1...v0.1.2

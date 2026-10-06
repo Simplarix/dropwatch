@@ -18,6 +18,16 @@ jobs:
     runs-on: ubuntu-latest
     environment: production
     steps:
+      - name: Free disk space for security tools
+        if: runner.environment == 'github-hosted'
+        shell: bash
+        run: |
+          set -euo pipefail
+          # Go scanners and their databases need room alongside Docker builds.
+          # These preinstalled SDKs are unused by this Go-only release job.
+          sudo rm -rf /usr/local/lib/android /usr/share/dotnet
+          df -h /
+
       - name: Check out complete repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:

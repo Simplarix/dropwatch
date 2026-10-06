@@ -28,6 +28,11 @@ make security
 
 This first runs the production Compose validation and then runs `govulncheck`, gosec, a production image build, an all-severity Trivy image scan, and a high/critical Trivy configuration scan. It downloads current vulnerability databases and therefore requires internet access. GitHub runs the same classes of checks on pull requests, on `main`, and weekly.
 
+The stable-release job removes unused Android and .NET SDKs from its disposable
+GitHub-hosted runner before downloading the Go security tools and vulnerability
+databases. This reserves disk space for the complete security gate and subsequent
+multi-architecture image build. The cleanup does not run on self-hosted runners.
+
 ## Production Compose validation
 
 Run:
