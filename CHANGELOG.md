@@ -4,6 +4,16 @@ All notable changes to this project are documented here. The format follows Keep
 
 ## [Unreleased]
 
+## [0.1.6] - 2026-10-06
+
+### Changed
+
+- Update `modernc.org/sqlite` to 1.60.1 and its required `modernc.org/libc` dependency to 1.77.1
+
+### Fixed
+
+- Pick up SQLite driver fixes for WAL shared-memory read faults and statement parameter binding performance
+
 ## [0.1.5] - 2026-10-01
 
 ### Changed
@@ -67,7 +77,8 @@ Version 0.1.3 was tagged but not published because release validation detected a
 - Production Compose now passes documented runtime and notification settings from the deployment environment
 - GHCR and Dokploy examples now consistently use the `Simplarix/dropwatch` repository and package
 
-[Unreleased]: https://github.com/Simplarix/dropwatch/compare/v0.1.5...HEAD
+[Unreleased]: https://github.com/Simplarix/dropwatch/compare/v0.1.6...HEAD
+[0.1.6]: https://github.com/Simplarix/dropwatch/compare/v0.1.5...v0.1.6
 [0.1.5]: https://github.com/Simplarix/dropwatch/compare/v0.1.4...v0.1.5
 [0.1.4]: https://github.com/Simplarix/dropwatch/compare/v0.1.2...v0.1.4
 [0.1.2]: https://github.com/Simplarix/dropwatch/compare/v0.1.1...v0.1.2
