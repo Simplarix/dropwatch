@@ -4,6 +4,17 @@ All notable changes to this project are documented here. The format follows Keep
 
 ## [Unreleased]
 
+## [0.1.8] - 2026-10-12
+
+### Changed
+
+- Update `golang.org/x/net` to 0.60.0
+
+### Security
+
+- Require Go 1.26.9 for local builds, CI, and release binaries, and build production container images with Go 1.27.2 to include the October standard-library security fixes
+- Pick up upstream HTTP/2 fixes in `golang.org/x/net` for header validation and limits, flow control, excessive CPU consumption, and an HPACK encoder race
+
 ## [0.1.7] - 2026-10-06
 
 Version 0.1.6 was tagged but not published because the release runner ran out of disk space while downloading the vulnerability database.
@@ -80,7 +91,8 @@ Version 0.1.3 was tagged but not published because release validation detected a
 - Production Compose now passes documented runtime and notification settings from the deployment environment
 - GHCR and Dokploy examples now consistently use the `Simplarix/dropwatch` repository and package
 
-[Unreleased]: https://github.com/Simplarix/dropwatch/compare/v0.1.7...HEAD
+[Unreleased]: https://github.com/Simplarix/dropwatch/compare/v0.1.8...HEAD
+[0.1.8]: https://github.com/Simplarix/dropwatch/compare/v0.1.7...v0.1.8
 [0.1.7]: https://github.com/Simplarix/dropwatch/compare/v0.1.5...v0.1.7
 [0.1.5]: https://github.com/Simplarix/dropwatch/compare/v0.1.4...v0.1.5
 [0.1.4]: https://github.com/Simplarix/dropwatch/compare/v0.1.2...v0.1.4
