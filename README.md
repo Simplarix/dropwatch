@@ -20,7 +20,7 @@ DropWatch is a self-hosted Go application for monitoring registered domains. It 
 
 Prerequisites:
 
-- Go 1.26.6 or newer
+- Go 1.26.9 or newer
 - Docker only for container tests
 - a C compiler for `go test -race` on platforms where the Go race detector requires it
 
