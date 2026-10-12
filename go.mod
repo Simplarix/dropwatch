@@ -7,7 +7,7 @@ require (
 	github.com/charmbracelet/lipgloss v1.1.0
 	github.com/miekg/dns v1.1.73
 	github.com/spf13/cobra v1.10.2
-	golang.org/x/net v0.59.0
+	golang.org/x/net v0.60.0
 	gopkg.in/yaml.v3 v3.0.1
 	modernc.org/sqlite v1.60.1
 )
