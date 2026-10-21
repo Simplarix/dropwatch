@@ -2,7 +2,7 @@
 
 Treat `AGENTS.md` as the authoritative repository guide and `REVIEW.md` as the review checklist.
 
-- This is a Go 1.26.9 CLI, TUI, and worker using Cobra, Bubble Tea, Lip Gloss, and SQLite.
+- This is a Go 1.26.10 CLI, TUI, and worker using Cobra, Bubble Tea, Lip Gloss, and SQLite.
 - Preserve the conservative availability invariant: DNS never decides availability; errors never become `available`; RDAP 404 needs separated confirmations; registration signals win.
 - Keep business logic in `internal/app` and `internal/domain`, persistence behind `internal/storage` interfaces, and presentation in `internal/cli` or `internal/tui`.
 - Use contexts, timeouts, redirect limits, bounded response bodies, UTC storage, and secret-safe errors for all external boundaries.

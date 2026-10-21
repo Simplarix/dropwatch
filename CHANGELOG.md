@@ -4,6 +4,16 @@ All notable changes to this project are documented here. The format follows Keep
 
 ## [Unreleased]
 
+## [0.1.9] - 2026-10-21
+
+### Changed
+
+- Update `golang.org/x/net` to 0.61.0, `golang.org/x/sys` to 0.49.0, and `golang.org/x/text` to 0.43.0
+
+### Security
+
+- Require Go 1.26.10 for local builds, CI, and release binaries, and build production container images with Go 1.27.3 to distrust compromised intermediate certificates in `crypto/x509` ([GO-2026-6809](https://pkg.go.dev/vuln/GO-2026-6809))
+
 ## [0.1.8] - 2026-10-12
 
 ### Changed
@@ -91,7 +101,8 @@ Version 0.1.3 was tagged but not published because release validation detected a
 - Production Compose now passes documented runtime and notification settings from the deployment environment
 - GHCR and Dokploy examples now consistently use the `Simplarix/dropwatch` repository and package
 
-[Unreleased]: https://github.com/Simplarix/dropwatch/compare/v0.1.8...HEAD
+[Unreleased]: https://github.com/Simplarix/dropwatch/compare/v0.1.9...HEAD
+[0.1.9]: https://github.com/Simplarix/dropwatch/compare/v0.1.8...v0.1.9
 [0.1.8]: https://github.com/Simplarix/dropwatch/compare/v0.1.7...v0.1.8
 [0.1.7]: https://github.com/Simplarix/dropwatch/compare/v0.1.5...v0.1.7
 [0.1.5]: https://github.com/Simplarix/dropwatch/compare/v0.1.4...v0.1.5
