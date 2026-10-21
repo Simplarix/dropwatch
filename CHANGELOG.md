@@ -10,6 +10,10 @@ All notable changes to this project are documented here. The format follows Keep
 
 - Update `golang.org/x/net` to 0.61.0, `golang.org/x/sys` to 0.49.0, and `golang.org/x/text` to 0.43.0
 
+### Security
+
+- Require Go 1.26.10 for local builds, CI, and release binaries, and build production container images with Go 1.27.3 to distrust compromised intermediate certificates in `crypto/x509` ([GO-2026-6809](https://pkg.go.dev/vuln/GO-2026-6809))
+
 ## [0.1.8] - 2026-10-12
 
 ### Changed
