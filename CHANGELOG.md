@@ -4,6 +4,16 @@ All notable changes to this project are documented here. The format follows Keep
 
 ## [Unreleased]
 
+## [0.1.11] - 2026-10-23
+
+### Fixed
+
+- Align dashboard headers and rows by visible terminal width, preserving columns with colored states and wide Unicode domain names
+
+### Changed
+
+- Replace the README's generated dashboard preview with a screenshot of the running TUI
+
 ## [0.1.10] - 2026-10-22
 
 ### Added
