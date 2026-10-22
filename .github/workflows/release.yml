@@ -68,6 +68,7 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p dist
+          cp LICENSE dist/LICENSE
           version="${GITHUB_REF_NAME}"
           created="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
           ldflags="-s -w -X github.com/Simplarix/dropwatch/internal/version.Version=${version} -X github.com/Simplarix/dropwatch/internal/version.Commit=${GITHUB_SHA} -X github.com/Simplarix/dropwatch/internal/version.BuildTime=${created}"
@@ -118,6 +119,7 @@ jobs:
             dist/dropwatch-linux-arm64 \
             dist/checksums.txt \
             dist/image-digest.txt \
+            dist/LICENSE \
             --verify-tag \
             --generate-notes \
             --title "DropWatch ${GITHUB_REF_NAME}"

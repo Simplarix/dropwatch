@@ -1,6 +1,17 @@
 # DropWatch
 
-DropWatch is a self-hosted Go application for monitoring registered domains. It uses RDAP as its primary source, treats DNS as a supporting signal, records relevant changes in SQLite, and sends notifications through Discord or SMTP. A single binary provides a scriptable CLI, an interactive terminal dashboard, and a long-running watcher.
+[![CI](https://github.com/Simplarix/dropwatch/actions/workflows/ci.yml/badge.svg)](https://github.com/Simplarix/dropwatch/actions/workflows/ci.yml)
+[![Security](https://github.com/Simplarix/dropwatch/actions/workflows/security.yml/badge.svg)](https://github.com/Simplarix/dropwatch/actions/workflows/security.yml)
+[![Release](https://img.shields.io/github/v/release/Simplarix/dropwatch)](https://github.com/Simplarix/dropwatch/releases)
+[![MIT license](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+
+Watch domains you care about and receive notifications when their registration state changes. DropWatch is a self-hosted domain watcher maintained by [Simplarix](https://github.com/Simplarix), with RDAP checks, SQLite history, and Discord or email notifications.
+
+A single Go binary provides a scriptable CLI, an interactive terminal dashboard, and a background watcher. DNS is a supporting signal; availability requires repeated authoritative observations. DropWatch does not register domains or guarantee that a registrar will accept a registration.
+
+![DropWatch terminal dashboard with synthetic sample data](docs/images/dashboard.svg)
+
+*Dashboard preview with synthetic sample data.*
 
 ## Features
 
@@ -16,64 +27,45 @@ DropWatch is a self-hosted Go application for monitoring registered domains. It 
 - Bubble Tea terminal dashboard
 - small hardened multi-architecture container and tag-gated GHCR release workflow
 
-## Local development and testing
-
-Prerequisites:
-
-- Go 1.26.10 or newer
-- Docker only for container tests
-- a C compiler for `go test -race` on platforms where the Go race detector requires it
-
-The fastest deterministic validation is:
-
-```bash
-make verify
-make smoke
-```
-
-`make verify` checks formatting, runs `go vet`, executes the full test suite with the race detector, and builds the application. `make smoke` exercises initialization, the watcher lease and heartbeat, health checking, IDN/Punycode handling, and JSON CLI output against an isolated temporary database. It does not need internet access.
-
-An optional real-network smoke test is available:
-
-```bash
-make smoke-live
-```
-
-It performs the deterministic smoke test first and then checks `example.com` through the real IANA bootstrap, RDAP, and DNS path. Use it only when outbound network access is expected.
-
-For a quicker edit/test loop:
-
-```bash
-make test
-go test ./internal/domain
-go test -run TestAvailabilityRequiresSeparatedConfirmations ./internal/app
-make build
-./dropwatch version
-```
-
-More detail is available in [docs/testing.md](docs/testing.md).
-
 ## Installation
 
-From a checkout:
+### Linux binary
+
+Download `dropwatch-linux-amd64` or `dropwatch-linux-arm64` and `checksums.txt` from the [latest release](https://github.com/Simplarix/dropwatch/releases/latest). In the download directory, verify the selected binary and make it executable:
 
 ```bash
-make build
-./dropwatch version
+sha256sum --check --ignore-missing checksums.txt
+chmod +x dropwatch-linux-amd64
+./dropwatch-linux-amd64 version
 ```
 
-Installation through Go is:
+For ARM64, use `dropwatch-linux-arm64` instead. Move the verified binary to a directory on your `PATH` and name it `dropwatch` to use the commands below. Release binaries target Linux; on macOS or other Go-supported systems, build from source.
+
+### Go or source checkout
+
+With Go 1.26.10 or newer:
 
 ```bash
 go install github.com/Simplarix/dropwatch/cmd/dropwatch@latest
 ```
+
+Make sure your Go binary directory (normally `$(go env GOPATH)/bin`) is on your `PATH`. Alternatively, clone and build:
+
+```bash
+git clone https://github.com/Simplarix/dropwatch.git
+cd dropwatch
+make build
+./dropwatch version
+```
+
+For a background container deployment, see [Docker](#docker).
 
 ## Quick start
 
 ```bash
 dropwatch init --write-config
 dropwatch domain add example.com
-dropwatch domain add https://bücher.de/some/path
+dropwatch domain add example.net
 dropwatch domain list
 dropwatch domain show example.com
 dropwatch check example.com
@@ -83,13 +75,15 @@ dropwatch dashboard
 
 Machine-readable commands support `--json`; automation can use `--quiet`. A network or registry failure makes `check` return a non-zero exit status, but it never marks a domain as available.
 
-The production process is:
+Keep the watcher running to perform scheduled checks and deliver change notifications:
 
 ```bash
 dropwatch watch
 ```
 
 `SIGINT` and `SIGTERM` trigger a graceful shutdown. Only one watcher may own a database at a time.
+
+Open `dropwatch dashboard` in another terminal while the watcher runs. The dashboard displays stored state and supports manual checks; opening it alone does not start the background watcher. Configure Discord or SMTP in the [configuration](#configuration) and run `dropwatch notify test` to verify delivery.
 
 ## CLI
 
@@ -160,29 +154,36 @@ DropWatch does not guarantee domain registration. RDAP and DNS results are not a
 
 ## Docker
 
-Build and run locally:
+Download `image-digest.txt` from the [release](https://github.com/Simplarix/dropwatch/releases/latest) you want to run. It contains the complete immutable GHCR image reference. No registry account is needed to pull the public image.
 
-```bash
-docker build -t dropwatch:local .
-docker volume create dropwatch-data
-docker run --rm \
-  --name dropwatch \
-  -v dropwatch-data:/data \
-  -e DROPWATCH_DATABASE_PATH=/data/dropwatch.db \
-  dropwatch:local
-```
-
-Or use Compose:
+From a checkout, use Compose:
 
 ```bash
 cp .env.example .env
 # Replace DROPWATCH_IMAGE in .env with the exact line from image-digest.txt.
 docker compose -f compose.production.yml up -d
+docker compose -f compose.production.yml exec dropwatch dropwatch domain add example.com
+docker compose -f compose.production.yml exec dropwatch dropwatch domain list
 ```
 
 Use the exact `ghcr.io/simplarix/dropwatch@sha256:...` digest from the release's `image-digest.txt`; floating tags such as `latest` are intentionally unsupported for production. The Compose file explicitly passes only the documented DropWatch settings from `.env` or the deployment platform into the container. [compose.production.yml](compose.production.yml) uses a read-only root filesystem, drops every Linux capability, enables `no-new-privileges`, limits resources and logs, and exposes no port. Its image healthcheck calls `dropwatch health --quiet`.
 
 The `/data` volume contains SQLite data and the RDAP bootstrap cache. Back it up using a SQLite-aware snapshot or while the container is stopped; do not copy individual WAL files independently.
+
+To build the container locally, run `make docker-build`. The [Dokploy deployment guide](docs/dokploy.md) covers release verification, environment settings, backups, and manual rollout.
+
+## Development and contributions
+
+Bug reports and focused pull requests are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) for the workflow and [SECURITY.md](SECURITY.md) for private vulnerability reporting.
+
+Development requires Go 1.26.10 or newer and a C compiler for race tests. Docker is needed for container checks. From a checkout, run:
+
+```bash
+make verify
+make smoke
+```
+
+`make verify` checks modules and formatting, runs `go vet` and the full race test suite, and builds the application. `make smoke` checks the CLI, watcher, storage, and health without internet access. Optional `make smoke-live` also checks real IANA, RDAP, and DNS services. See [docs/testing.md](docs/testing.md) for focused checks.
 
 ## Architecture and agent-assisted development
 
@@ -197,3 +198,7 @@ The `/data` volume contains SQLite data and the RDAP bootstrap cache. Back it up
 Run `make security` for reachable Go vulnerability checks, static security analysis, repository configuration scanning, and a full image CVE scan. GitHub repeats these checks for pull requests, `main`, and weekly schedules; Dependabot monitors Go modules, Actions, and Docker references.
 
 A normal push to `main` runs CI only. Only a newly pushed stable tag in the exact form `vX.Y.Z`, whose commit belongs to `main`, creates the GitHub Release and multi-architecture image with provenance and an SBOM. Deployment remains deliberately private and manual; the GitHub-hosted runner never contacts Dokploy. The exact GitHub, GHCR, Dokploy, backup, and verification procedure is in [docs/dokploy.md](docs/dokploy.md).
+
+## License
+
+DropWatch is [MIT licensed](LICENSE). Third-party dependencies retain their respective licenses.
