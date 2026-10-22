@@ -17,6 +17,10 @@ All notable changes to this project are documented here. The format follows Keep
 - Update the deployment guide for public repository and container access
 - Point CODEOWNERS to the current maintainer account
 
+### Fixed
+
+- Reserve hosted-runner disk space for the container security scan's vulnerability database
+
 ## [0.1.9] - 2026-10-21
 
 ### Changed
