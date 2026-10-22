@@ -9,9 +9,9 @@ Watch domains you care about and receive notifications when their registration s
 
 A single Go binary provides a scriptable CLI, an interactive terminal dashboard, and a background watcher. DNS is a supporting signal; availability requires repeated authoritative observations. DropWatch does not register domains or guarantee that a registrar will accept a registration.
 
-![DropWatch terminal dashboard with synthetic sample data](docs/images/dashboard.svg)
+![DropWatch terminal dashboard with synthetic sample data](docs/images/dashboard.jpg)
 
-*Dashboard preview with synthetic sample data.*
+*Screenshot of the running DropWatch TUI in a terminal with synthetic sample data.*
 
 ## Features
 

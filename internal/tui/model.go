@@ -11,6 +11,7 @@ import (
 	"github.com/Simplarix/dropwatch/internal/domain"
 	"github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
+	"github.com/charmbracelet/x/ansi"
 )
 
 type Model struct {
@@ -196,8 +197,8 @@ func (m Model) listView() string {
 	var body strings.Builder
 	body.WriteString(titleStyle.Render("DropWatch Dashboard"))
 	body.WriteString("\n\n")
-	header := fmt.Sprintf("%-25s %-20s %-17s %-17s %-17s %-7s", "DOMAIN", "STATE", "EXPIRES", "LAST CHECK", "NEXT CHECK", "ERRORS")
-	body.WriteString(dimStyle.Render(header))
+	header := dashboardRow("DOMAIN", "STATE", "EXPIRES", "LAST CHECK", "NEXT CHECK", "ERRORS")
+	body.WriteString(rowStyle.Render(dimStyle.Render(header)))
 	body.WriteByte('\n')
 	if len(m.domains) == 0 {
 		body.WriteString("\nNo domains. Press a to add one.")
@@ -206,8 +207,8 @@ func (m Model) listView() string {
 			expires := formatDate(item.ExpiresAt, m.location)
 			last := formatDate(item.LastCheckAt, m.location)
 			next := item.NextCheckAt.In(m.location).Format("2006-01-02 15:04")
-			line := fmt.Sprintf("%-25s %-20s %-17s %-17s %-17s %-7d",
-				truncate(item.UnicodeName, 24), styledState(item.State), expires, last, next, item.ConsecutiveErrors)
+			line := dashboardRow(
+				truncate(item.UnicodeName, 24), styledState(item.State), expires, last, next, fmt.Sprint(item.ConsecutiveErrors))
 			if index == m.selected {
 				body.WriteString(selectStyle.Render(line))
 			} else {
@@ -219,6 +220,15 @@ func (m Model) listView() string {
 	body.WriteString("\n")
 	body.WriteString(dimStyle.Render("↑/↓ j/k navigate • Enter details • r check • R check all • a add • d remove • h history • ? help • q quit"))
 	return body.String()
+}
+
+func dashboardRow(cells ...string) string {
+	widths := [...]int{25, 20, 17, 17, 17, 7}
+	for index, cell := range cells {
+		// Terminal cells exclude ANSI styling and account for wide Unicode characters.
+		cells[index] = cell + strings.Repeat(" ", max(0, widths[index]-lipgloss.Width(cell)))
+	}
+	return strings.Join(cells, " ")
 }
 
 func (m Model) detailView() string {
@@ -370,11 +380,7 @@ func formatDate(value *time.Time, location *time.Location) string {
 }
 
 func truncate(value string, maxLength int) string {
-	runes := []rune(value)
-	if len(runes) <= maxLength {
-		return value
-	}
-	return string(runes[:maxLength-1]) + "…"
+	return ansi.Truncate(value, maxLength, "…")
 }
 
 func fallback(value, replacement string) string {
