@@ -1,4 +1,4 @@
-# Private production release and Dokploy deployment
+# Releases and Dokploy deployment
 
 DropWatch is an outbound-only worker. It needs DNS, HTTPS, and optional SMTP
 egress, but it must never receive a public domain, reverse-proxy route, or
@@ -24,7 +24,7 @@ git status --short --branch
 IANA, RDAP, and DNS services. All other commands must pass. The final Git status
 must show `main` aligned with `origin/main` and no uncommitted files.
 
-Before the first stable tag, confirm that:
+Before each stable tag, confirm that:
 
 - [CHANGELOG.md](../CHANGELOG.md) contains the intended version and date;
 - all Dependabot pull requests have been reviewed, merged, or deliberately
@@ -34,15 +34,15 @@ Before the first stable tag, confirm that:
 
 ## 2. Configure the GitHub repository
 
-The canonical repository is the private
-[`Simplarix/dropwatch`](https://github.com/Simplarix/dropwatch) repository.
+The canonical public repository is
+[`Simplarix/dropwatch`](https://github.com/Simplarix/dropwatch).
 
 ### 2.1 General repository settings
 
 Open **Repository → Settings → General** and configure:
 
 1. Keep the default branch set to `main`.
-2. Keep the repository private.
+2. Keep the repository public and retain the [MIT license](../LICENSE).
 3. Under **Pull Requests**, enable squash merge and rebase merge, but disable
    merge commits if the `main` ruleset requires linear history. Use rebase merge
    when a pull request already contains deliberately separated commits; use
@@ -50,8 +50,9 @@ Open **Repository → Settings → General** and configure:
 4. Enable automatic deletion of head branches after a pull request is merged.
 5. Keep Issues enabled if the included issue templates will be used.
 
-If the repository is ever made public, add an explicit open-source license and
-perform a separate privacy review first.
+Before publishing previously private material, review the complete Git history,
+release assets, issues, and pull requests for credentials and private data. Keep
+internal deployment notes and communication drafts outside the repository.
 
 ### 2.2 Actions permissions
 
@@ -126,13 +127,12 @@ environment named exactly `production`, matching the release workflow:
 
 1. Under deployment branches and tags, select **Selected branches and tags**.
 2. Add the tag pattern `v*`; do not add normal branches.
-3. If the GitHub plan supports required reviewers for private repositories, add
+3. If required reviewers are available, add
    a release reviewer and prevent self-review when at least two maintainers are
    available.
 4. Do not add Dokploy credentials or notification secrets. This environment
    gates publication only; the workflow never connects to Dokploy.
 
-GitHub plan availability for required reviewers on private repositories varies.
 If the control is unavailable, the protected-tag bypass list and deliberate
 creation of a signed stable tag are the manual release gate.
 
@@ -153,15 +153,17 @@ additional `main` ruleset check. Keep the weekly Security workflow enabled.
 
 ## 3. Publish the immutable GitHub release
 
-Create a signed tag only after the protected `main` commit is green:
+Choose the next unused stable version from [CHANGELOG.md](../CHANGELOG.md).
+Replace `vX.Y.Z` below with that version; never reuse an existing tag. Create a
+signed tag only after the protected `main` commit is green:
 
 ```bash
 git switch main
 git pull --ff-only
 git status --short --branch
-git tag -s v0.1.0 -m "DropWatch v0.1.0"
-git tag -v v0.1.0
-git push origin v0.1.0
+git tag -s vX.Y.Z -m "DropWatch vX.Y.Z"
+git tag -v vX.Y.Z
+git push origin vX.Y.Z
 ```
 
 If signed tags are not yet configured, set up a verified GPG or SSH signing key
@@ -173,7 +175,7 @@ The `Stable release` workflow:
 1. verifies the exact stable tag and its ancestry from `main`;
 2. reruns verification, Compose validation, and the security gate;
 3. builds Linux `amd64` and `arm64` binaries and checksums;
-4. publishes `ghcr.io/simplarix/dropwatch:v0.1.0`;
+4. publishes `ghcr.io/simplarix/dropwatch:vX.Y.Z`;
 5. attaches OCI provenance and an SBOM;
 6. creates `image-digest.txt` with the immutable multi-architecture digest;
 7. creates the GitHub Release and attaches all release files.
@@ -184,7 +186,8 @@ workflow finishes, verify that the GitHub Release contains:
 - `dropwatch-linux-amd64`;
 - `dropwatch-linux-arm64`;
 - `checksums.txt`;
-- `image-digest.txt`.
+- `image-digest.txt`;
+- `LICENSE` (from v0.1.10 onward).
 
 The digest file must contain one complete line like:
 
@@ -202,9 +205,14 @@ The first successful release creates the organization package. Open the
 `dropwatch` package under the `Simplarix` organization and verify:
 
 1. the package is linked to `Simplarix/dropwatch`;
-2. the package visibility is private;
+2. the package visibility is public (separate from repository visibility);
 3. repository Actions access permits `Simplarix/dropwatch` to publish;
-4. the new `v0.1.0` version and its digest are visible.
+4. the new version and its digest are visible;
+5. the exact release digest can be pulled without registry credentials.
+
+Set package visibility in **Organization → Packages → dropwatch → Package
+settings → Change visibility → Public**. Verify an anonymous pull from a clean
+Docker credential configuration before announcing container availability.
 
 The workflow uses its short-lived `GITHUB_TOKEN`; no long-lived publishing token
 belongs in GitHub secrets.
@@ -229,52 +237,14 @@ the effective `DOCKER-USER` or nftables policy after firewall changes.
 
 ## 5. Connect Dokploy to GitHub and GHCR
 
-Two separate read paths may be required:
+The repository and GHCR image are public. In Dokploy, use the GitHub provider or
+public HTTPS Git URL `https://github.com/Simplarix/dropwatch.git` to read
+`compose.production.yml`. The public image can be pulled without a registry token.
 
-1. read access to the private Git repository for `compose.production.yml`;
-2. read access to the private GHCR package for the immutable image.
-
-### 5.1 Private Git repository
-
-Prefer the Dokploy GitHub provider when it is already installed for the
-`Simplarix` organization and restricted to this repository.
-
-For the generic Git provider:
-
-1. In Dokploy, open **SSH Keys** and generate a dedicated key named
-   `dropwatch-github-read`.
-2. Copy only its public key.
-3. In GitHub, open **Repository → Settings → Deploy keys → Add deploy key**.
-4. Name it `Dokploy production read-only`, paste the public key, and leave
-   **Allow write access** disabled.
-5. In Dokploy use the SSH repository URL
-   `git@github.com:Simplarix/dropwatch.git` and branch `main`.
-
-Do not reuse a personal workstation key and do not grant repository write
-access.
-
-### 5.2 Private GHCR package
-
-Dokploy only pulls the image, so use a dedicated read-only credential:
-
-1. In GitHub account settings, create a classic personal access token named
-   `Dokploy DropWatch GHCR read`.
-2. Grant only `read:packages` plus any access GitHub explicitly requires to read
-   the private package.
-3. If the organization enforces SAML SSO, authorize the token for `Simplarix`.
-4. In Dokploy, open **Registry → Create Registry**.
-5. Configure:
-   - Registry name: `Simplarix GHCR read-only`;
-   - Registry URL: `ghcr.io`;
-   - Username: the GitHub account that owns the token;
-   - Password: the token;
-   - Image prefix: leave empty unless a Dokploy cluster specifically requires
-     one.
-6. Select the production server, run **Test**, and save only after the test
-   succeeds.
-
-Do not grant `write:packages`, `delete:packages`, workflow, or repository write
-permissions to a credential used only for pulling.
+An existing read-only GitHub/registry connection may remain in use. Keep its
+credentials private; no write access is needed to read a Compose definition or
+pull an image. Public artifacts do not require public access to Dokploy, SSH,
+Docker, the database, or notification credentials.
 
 ## 6. Create the Dokploy Compose service
 
@@ -331,7 +301,7 @@ Configure at least one notification channel.
 For Discord:
 
 ```dotenv
-DROPWATCH_DISCORD_WEBHOOK_URL=https://discord.com/api/webhooks/REPLACE_WITH_REAL_VALUE
+DROPWATCH_DISCORD_WEBHOOK_URL=
 ```
 
 For SMTP:
@@ -339,13 +309,14 @@ For SMTP:
 ```dotenv
 DROPWATCH_SMTP_HOST=smtp.example.com
 DROPWATCH_SMTP_PORT=587
-DROPWATCH_SMTP_USERNAME=replace-me
-DROPWATCH_SMTP_PASSWORD=replace-me
+DROPWATCH_SMTP_USERNAME=
+DROPWATCH_SMTP_PASSWORD=
 DROPWATCH_SMTP_FROM=dropwatch@example.com
 DROPWATCH_SMTP_TO=operator@example.com
 DROPWATCH_SMTP_REQUIRE_TLS=true
 ```
 
+Fill the enabled channel’s empty credential values privately in Dokploy.
 `DROPWATCH_SMTP_TO` accepts a comma-separated recipient list. Keep TLS required.
 Omit the unused channel's variables instead of inventing placeholder
 credentials. Treat Dokploy administrators as secret-bearing administrators
@@ -437,7 +408,7 @@ existing release.
 - `production` environment targets stable tags.
 - Repository security features are enabled.
 - Stable release workflow is green.
-- GHCR package is private, linked, and readable by Dokploy.
+- GHCR package is public, linked, and anonymously pullable by release digest.
 - Dokploy and host administration are private.
 - Compose uses the release digest and has no inbound route.
 - At least one notification channel passes its live test.

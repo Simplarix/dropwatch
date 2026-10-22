@@ -32,12 +32,14 @@ ARG SOURCE=https://github.com/Simplarix/dropwatch
 LABEL org.opencontainers.image.title="DropWatch" \
       org.opencontainers.image.description="RDAP and DNS domain monitoring worker" \
       org.opencontainers.image.source="${SOURCE}" \
+      org.opencontainers.image.licenses="MIT" \
       org.opencontainers.image.version="${VERSION}" \
       org.opencontainers.image.revision="${REVISION}" \
       org.opencontainers.image.created="${CREATED}"
 
 COPY --from=build /rootfs /
 COPY --from=build --chown=10001:10001 /out/dropwatch /usr/local/bin/dropwatch
+COPY --from=build /src/LICENSE /licenses/dropwatch/LICENSE
 
 USER 10001:10001
 WORKDIR /data

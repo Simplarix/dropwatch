@@ -43,6 +43,15 @@ jobs:
     name: Container and configuration scan
     runs-on: ubuntu-latest
     steps:
+      - name: Free disk space for security tools
+        if: runner.environment == 'github-hosted'
+        shell: bash
+        run: |
+          set -euo pipefail
+          # Unused hosted-runner SDKs leave too little room for Trivy's database.
+          sudo rm -rf /usr/local/lib/android /usr/share/dotnet
+          df -h /
+
       - name: Check out repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 

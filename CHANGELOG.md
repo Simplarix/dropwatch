@@ -4,6 +4,23 @@ All notable changes to this project are documented here. The format follows Keep
 
 ## [Unreleased]
 
+## [0.1.10] - 2026-10-22
+
+### Added
+
+- MIT license, included in release downloads and container images
+- Public installation instructions, a dashboard preview with sample data, and Simplarix maintainer attribution
+
+### Changed
+
+- Prepare the existing project for its public open-source release, preserving version history
+- Update the deployment guide for public repository and container access
+- Point CODEOWNERS to the current maintainer account
+
+### Fixed
+
+- Reserve hosted-runner disk space for the container security scan's vulnerability database
+
 ## [0.1.9] - 2026-10-21
 
 ### Changed
@@ -101,7 +118,8 @@ Version 0.1.3 was tagged but not published because release validation detected a
 - Production Compose now passes documented runtime and notification settings from the deployment environment
 - GHCR and Dokploy examples now consistently use the `Simplarix/dropwatch` repository and package
 
-[Unreleased]: https://github.com/Simplarix/dropwatch/compare/v0.1.9...HEAD
+[Unreleased]: https://github.com/Simplarix/dropwatch/compare/v0.1.10...HEAD
+[0.1.10]: https://github.com/Simplarix/dropwatch/compare/v0.1.9...v0.1.10
 [0.1.9]: https://github.com/Simplarix/dropwatch/compare/v0.1.8...v0.1.9
 [0.1.8]: https://github.com/Simplarix/dropwatch/compare/v0.1.7...v0.1.8
 [0.1.7]: https://github.com/Simplarix/dropwatch/compare/v0.1.5...v0.1.7
