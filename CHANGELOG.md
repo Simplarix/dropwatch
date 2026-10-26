@@ -4,6 +4,14 @@ All notable changes to this project are documented here. The format follows Keep
 
 ## [Unreleased]
 
+## [0.1.12] - 2026-10-26
+
+### Changed
+
+- Update `github.com/charmbracelet/x/ansi` to 0.11.9 and its terminal rendering dependencies
+- Update `modernc.org/sqlite` to 1.61.0 (SQLite 3.54.1) and its required `modernc.org/libc` dependency to 1.79.0
+- Refresh the pinned Go 1.27.3 Alpine build image digest
+
 ## [0.1.11] - 2026-10-23
 
 ### Fixed
@@ -128,7 +136,9 @@ Version 0.1.3 was tagged but not published because release validation detected a
 - Production Compose now passes documented runtime and notification settings from the deployment environment
 - GHCR and Dokploy examples now consistently use the `Simplarix/dropwatch` repository and package
 
-[Unreleased]: https://github.com/Simplarix/dropwatch/compare/v0.1.10...HEAD
+[Unreleased]: https://github.com/Simplarix/dropwatch/compare/v0.1.12...HEAD
+[0.1.12]: https://github.com/Simplarix/dropwatch/compare/v0.1.11...v0.1.12
+[0.1.11]: https://github.com/Simplarix/dropwatch/compare/v0.1.10...v0.1.11
 [0.1.10]: https://github.com/Simplarix/dropwatch/compare/v0.1.9...v0.1.10
 [0.1.9]: https://github.com/Simplarix/dropwatch/compare/v0.1.8...v0.1.9
 [0.1.8]: https://github.com/Simplarix/dropwatch/compare/v0.1.7...v0.1.8
