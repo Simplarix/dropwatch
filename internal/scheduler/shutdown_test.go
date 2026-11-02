@@ -56,6 +56,38 @@ func newShutdownWatcher(repo *shutdownRepository, checker DomainChecker) *Watche
 	return NewWatcher(repo, checker, cfg, slog.New(slog.NewTextHandler(io.Discard, nil)))
 }
 
+func TestWatcherSkipsQueuedCheckAfterCancellation(t *testing.T) {
+	for _, deadline := range []bool{false, true} {
+		t.Run(fmt.Sprintf("deadline=%t", deadline), func(t *testing.T) {
+			ctx, cancel := context.WithCancel(context.Background())
+			if deadline {
+				cancel()
+				ctx, cancel = context.WithDeadline(context.Background(), time.Time{})
+			}
+			cancel()
+			var calls atomic.Int32
+			checker := shutdownChecker(func(context.Context, domain.Domain) error {
+				calls.Add(1)
+				return nil
+			})
+			watcher := newShutdownWatcher(nil, checker)
+			item := domain.Domain{ID: 1}
+			watcher.markStarted(item.ID)
+			watcher.wg.Add(1)
+			watcher.runCheck(ctx, item)
+			if calls.Load() != 0 {
+				t.Fatal("queued check started after context cancellation")
+			}
+			if len(watcher.inFlight) != 0 {
+				t.Fatal("canceled worker remained in flight")
+			}
+			if err := watcher.waitForWorkers(); err != nil {
+				t.Fatal(err)
+			}
+		})
+	}
+}
+
 func TestWatcherCancellationDuringHeartbeatWaitsForWorkers(t *testing.T) {
 	for _, deadline := range []bool{false, true} {
 		t.Run(fmt.Sprintf("deadline=%t", deadline), func(t *testing.T) {

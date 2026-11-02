@@ -6,6 +6,10 @@ All notable changes to this project are documented here. The format follows Keep
 
 ## [0.1.13] - 2026-11-02
 
+### Fixed
+
+- Skip queued domain checks when their context has already been canceled during watcher shutdown
+
 ### Changed
 
 - Update `golang.org/x/net` to 0.62.0

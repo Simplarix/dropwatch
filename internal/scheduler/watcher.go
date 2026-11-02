@@ -106,6 +106,9 @@ func (w *Watcher) dispatchDue(ctx context.Context) error {
 func (w *Watcher) runCheck(ctx context.Context, item domain.Domain) {
 	defer w.wg.Done()
 	defer w.markFinished(item.ID)
+	if ctx.Err() != nil {
+		return
+	}
 	start := time.Now()
 	err := w.checker.CheckScheduled(ctx, item)
 	if err != nil {
