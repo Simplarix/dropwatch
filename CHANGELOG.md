@@ -4,6 +4,17 @@ All notable changes to this project are documented here. The format follows Keep
 
 ## [Unreleased]
 
+## [0.1.13] - 2026-11-02
+
+### Changed
+
+- Update `golang.org/x/net` to 0.62.0
+- Refresh the pinned Go 1.27.3 Alpine build image digest
+
+### Security
+
+- Include upstream HTML parsing and rendering fixes in `golang.org/x/net` ([GO-2026-6860](https://pkg.go.dev/vuln/GO-2026-6860), [GO-2026-6866](https://pkg.go.dev/vuln/GO-2026-6866)); DropWatch uses the module's IDNA package and does not call the affected HTML APIs
+
 ## [0.1.12] - 2026-10-26
 
 ### Changed
@@ -136,7 +147,8 @@ Version 0.1.3 was tagged but not published because release validation detected a
 - Production Compose now passes documented runtime and notification settings from the deployment environment
 - GHCR and Dokploy examples now consistently use the `Simplarix/dropwatch` repository and package
 
-[Unreleased]: https://github.com/Simplarix/dropwatch/compare/v0.1.12...HEAD
+[Unreleased]: https://github.com/Simplarix/dropwatch/compare/v0.1.13...HEAD
+[0.1.13]: https://github.com/Simplarix/dropwatch/compare/v0.1.12...v0.1.13
 [0.1.12]: https://github.com/Simplarix/dropwatch/compare/v0.1.11...v0.1.12
 [0.1.11]: https://github.com/Simplarix/dropwatch/compare/v0.1.10...v0.1.11
 [0.1.10]: https://github.com/Simplarix/dropwatch/compare/v0.1.9...v0.1.10
