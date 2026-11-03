@@ -28,11 +28,34 @@ make security
 
 This first runs the production Compose validation and then runs `govulncheck`, gosec, a production image build, an all-severity Trivy image scan, and a high/critical Trivy configuration scan. It downloads current vulnerability databases and therefore requires internet access. GitHub runs the same classes of checks on pull requests, on `main`, and weekly.
 
-The stable-release and container-security jobs remove unused Android and .NET
-SDKs from their disposable GitHub-hosted runners before downloading the Go
-security tools and vulnerability databases. This reserves disk space for the
-complete security gate and, in releases, the subsequent multi-architecture image
-build. The cleanup does not run on self-hosted runners.
+Trivy runs from an official release binary instead of compiling its large Go
+dependency tree on every runner. `scripts/trivy.sh` pins version 0.72.0 and the
+SHA-256 archive checksum for Linux/macOS on amd64/arm64. It verifies the download
+before extraction and reuses the binary in the checkout's ignored `.cache/tools`
+directory. Updating Trivy requires updating both the version and all four checksums.
+Set `DROPWATCH_TOOLS_DIR` to use a different local tool directory, or `TRIVY` to
+override the command used by Make. Vulnerability databases still update normally;
+scan severities and failure behavior are unchanged.
+
+## Actions runtime and storage
+
+This public repository uses standard GitHub-hosted runners, which do not consume
+the account's included paid compute allowance. A self-hosted runner is not needed
+to avoid the private-repository minutes quota. See [GitHub Actions billing](https://docs.github.com/en/billing/concepts/product-billing/github-actions).
+
+CI and Security cancel superseded runs for the same branch or pull request. Their
+jobs have ten-minute timeouts; the tag-only release has a thirty-minute timeout
+and a running release is not canceled by newer releases. All source, dependency, image, and
+configuration checks remain enabled for pull requests and `main`.
+
+The workflows do not upload Actions artifacts. Release binaries and checksums are
+GitHub Release assets, and container images are published to GHCR. GitHub Free's
+500 MB artifact allowance is separate from the included 10 GB of Actions cache
+storage per repository. Only the existing `setup-go` caches are persisted between
+runs; Trivy tools/databases and Docker layers do not create additional Actions
+caches. The container-security job needs no host Go setup or cache now that Trivy
+is downloaded as a binary. Avoid adding large artifact uploads or build caches
+without considering their storage and retention.
 
 ## Production Compose validation
 

@@ -20,6 +20,7 @@ jobs:
   source:
     name: Source and dependency scan
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - name: Check out repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -42,33 +43,17 @@ jobs:
   container:
     name: Container and configuration scan
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
-      - name: Free disk space for security tools
-        if: runner.environment == 'github-hosted'
-        shell: bash
-        run: |
-          set -euo pipefail
-          # Unused hosted-runner SDKs leave too little room for Trivy's database.
-          sudo rm -rf /usr/local/lib/android /usr/share/dotnet
-          df -h /
-
       - name: Check out repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-
-      - name: Set up Go
-        uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
-        with:
-          go-version-file: go.mod
-          cache-dependency-path: go.sum
 
       - name: Build production image
         run: docker build --tag dropwatch:security-scan .
 
       - name: Scan image for every known vulnerability
-        env:
-          GOEXPERIMENT: jsonv2
         run: >-
-          go run github.com/aquasecurity/trivy/cmd/trivy@v0.72.0 image
+          sh scripts/trivy.sh image
           --scanners vuln
           --severity UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL
           --exit-code 1
@@ -76,10 +61,8 @@ jobs:
           dropwatch:security-scan
 
       - name: Scan repository configuration
-        env:
-          GOEXPERIMENT: jsonv2
         run: >-
-          go run github.com/aquasecurity/trivy/cmd/trivy@v0.72.0 config
+          sh scripts/trivy.sh config
           --severity HIGH,CRITICAL
           --exit-code 1
           .
