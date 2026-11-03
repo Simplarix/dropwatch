@@ -1,5 +1,6 @@
 /dropwatch
 /dist/
+/.cache/
 /data/
 /*.db
 /*.db-shm

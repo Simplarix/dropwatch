@@ -1,6 +1,7 @@
 BINARY := dropwatch
 GO ?= go
 GOFMT ?= gofmt
+TRIVY ?= sh scripts/trivy.sh
 VERSION ?= dev
 REVISION ?= $(shell git rev-parse --short HEAD 2>/dev/null || printf none)
 CREATED ?= $(shell date -u +%Y-%m-%dT%H:%M:%SZ)
@@ -71,8 +72,8 @@ security-source:
 	$(GO) run github.com/securego/gosec/v2/cmd/gosec@v2.28.0 -quiet ./...
 
 security-image: docker-build
-	GOEXPERIMENT=jsonv2 $(GO) run github.com/aquasecurity/trivy/cmd/trivy@v0.72.0 image --scanners vuln --severity UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL --exit-code 1 --no-progress dropwatch:local
-	GOEXPERIMENT=jsonv2 $(GO) run github.com/aquasecurity/trivy/cmd/trivy@v0.72.0 config --severity HIGH,CRITICAL --exit-code 1 .
+	$(TRIVY) image --scanners vuln --severity UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL --exit-code 1 --no-progress dropwatch:local
+	$(TRIVY) config --severity HIGH,CRITICAL --exit-code 1 .
 
 clean:
 	$(GO) clean

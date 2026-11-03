@@ -197,7 +197,9 @@ make smoke
 
 Run `make security` for reachable Go vulnerability checks, static security analysis, repository configuration scanning, and a full image CVE scan. GitHub repeats these checks for pull requests, `main`, and weekly schedules; Dependabot monitors Go modules, Actions, and Docker references.
 
-A normal push to `main` runs CI only. Only a newly pushed stable tag in the exact form `vX.Y.Z`, whose commit belongs to `main`, creates the GitHub Release and multi-architecture image with provenance and an SBOM. Deployment remains deliberately private and manual; the GitHub-hosted runner never contacts Dokploy. The exact GitHub, GHCR, Dokploy, backup, and verification procedure is in [docs/dokploy.md](docs/dokploy.md).
+Trivy uses a pinned, checksum-verified release binary rather than compiling on each run. Standard GitHub-hosted runners are free for this public repository, and the workflows do not upload Actions artifacts. See [Actions runtime and storage](docs/testing.md#actions-runtime-and-storage) for cache usage and runtime limits.
+
+A normal push to `main` runs CI and Security. Only a newly pushed stable tag in the exact form `vX.Y.Z`, whose commit belongs to `main`, creates the GitHub Release and multi-architecture image with provenance and an SBOM. Deployment remains deliberately private and manual; the GitHub-hosted runner never contacts Dokploy. The exact GitHub, GHCR, Dokploy, backup, and verification procedure is in [docs/dokploy.md](docs/dokploy.md).
 
 ## License
 
