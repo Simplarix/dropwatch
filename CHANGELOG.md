@@ -4,6 +4,16 @@ All notable changes to this project are documented here. The format follows Keep
 
 ## [Unreleased]
 
+## [0.1.15] - 2026-11-16
+
+### Changed
+
+- Update `modernc.org/sqlite` to 1.62.0 and its required `modernc.org/libc` dependency to 1.80.1
+
+### Security
+
+- Require Go 1.26.11 for local builds, CI, and release binaries, and build production container images with Go 1.27.4 to include the November Go security fixes, including [GO-2026-6859](https://pkg.go.dev/vuln/GO-2026-6859)
+
 ## [0.1.14] - 2026-11-09
 
 ### Fixed
@@ -161,7 +171,8 @@ Version 0.1.3 was tagged but not published because release validation detected a
 - Production Compose now passes documented runtime and notification settings from the deployment environment
 - GHCR and Dokploy examples now consistently use the `Simplarix/dropwatch` repository and package
 
-[Unreleased]: https://github.com/Simplarix/dropwatch/compare/v0.1.14...HEAD
+[Unreleased]: https://github.com/Simplarix/dropwatch/compare/v0.1.15...HEAD
+[0.1.15]: https://github.com/Simplarix/dropwatch/compare/v0.1.14...v0.1.15
 [0.1.14]: https://github.com/Simplarix/dropwatch/compare/v0.1.13...v0.1.14
 [0.1.13]: https://github.com/Simplarix/dropwatch/compare/v0.1.12...v0.1.13
 [0.1.12]: https://github.com/Simplarix/dropwatch/compare/v0.1.11...v0.1.12
