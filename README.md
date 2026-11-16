@@ -43,7 +43,7 @@ For ARM64, use `dropwatch-linux-arm64` instead. Move the verified binary to a di
 
 ### Go or source checkout
 
-With Go 1.26.10 or newer:
+With Go 1.26.11 or newer:
 
 ```bash
 go install github.com/Simplarix/dropwatch/cmd/dropwatch@latest
@@ -176,7 +176,7 @@ To build the container locally, run `make docker-build`. The [Dokploy deployment
 
 Bug reports and focused pull requests are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) for the workflow and [SECURITY.md](SECURITY.md) for private vulnerability reporting.
 
-Development requires Go 1.26.10 or newer and a C compiler for race tests. Docker is needed for container checks. From a checkout, run:
+Development requires Go 1.26.11 or newer and a C compiler for race tests. Docker is needed for container checks. From a checkout, run:
 
 ```bash
 make verify
