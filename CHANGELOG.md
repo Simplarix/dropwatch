@@ -4,6 +4,14 @@ All notable changes to this project are documented here. The format follows Keep
 
 ## [Unreleased]
 
+## [0.1.16] - 2026-11-23
+
+### Changed
+
+- Update `github.com/charmbracelet/x/ansi` to 0.11.10 and `golang.org/x/net` to 0.63.0, along with their transitive Go dependencies
+- Refresh the pinned Go 1.27.4 Alpine build image digest
+- Update `actions/setup-go` to 7.1.0 in CI, security, and release workflows
+
 ## [0.1.15] - 2026-11-16
 
 ### Changed
@@ -171,7 +179,8 @@ Version 0.1.3 was tagged but not published because release validation detected a
 - Production Compose now passes documented runtime and notification settings from the deployment environment
 - GHCR and Dokploy examples now consistently use the `Simplarix/dropwatch` repository and package
 
-[Unreleased]: https://github.com/Simplarix/dropwatch/compare/v0.1.15...HEAD
+[Unreleased]: https://github.com/Simplarix/dropwatch/compare/v0.1.16...HEAD
+[0.1.16]: https://github.com/Simplarix/dropwatch/compare/v0.1.15...v0.1.16
 [0.1.15]: https://github.com/Simplarix/dropwatch/compare/v0.1.14...v0.1.15
 [0.1.14]: https://github.com/Simplarix/dropwatch/compare/v0.1.13...v0.1.14
 [0.1.13]: https://github.com/Simplarix/dropwatch/compare/v0.1.12...v0.1.13
